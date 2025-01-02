@@ -41,6 +41,18 @@ export const useCartStore = create((set, get) => ({
 		set((prevState) => ({ cart: prevState.cart.filter((item) => item._id !== productId) }));
 		get().calculateTotals();
 	},
+	updateQuantity: async (productId, quantity) => {
+		if (quantity === 0) {
+			get().removeFromCart(productId);
+			return;
+		}
+
+		await axios.put(`/cart/${productId}`, { quantity });
+		set((prevState) => ({
+			cart: prevState.cart.map((item) => (item._id === productId ? { ...item, quantity } : item)),
+		}));
+		get().calculateTotals();
+	},
 	getMyCoupon: async () => {
 		try {
 			const response = await axios.get("/coupons");
@@ -70,18 +82,7 @@ export const useCartStore = create((set, get) => ({
 		set({ cart: [], coupon: null, total: 0, subtotal: 0 });
 	},
 	
-	updateQuantity: async (productId, quantity) => {
-		if (quantity === 0) {
-			get().removeFromCart(productId);
-			return;
-		}
-
-		await axios.put(`/cart/${productId}`, { quantity });
-		set((prevState) => ({
-			cart: prevState.cart.map((item) => (item._id === productId ? { ...item, quantity } : item)),
-		}));
-		get().calculateTotals();
-	},
+	
 	calculateTotals: () => {
 		const { cart, coupon } = get();
 		const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
