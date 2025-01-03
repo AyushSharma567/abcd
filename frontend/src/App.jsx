@@ -27,7 +27,7 @@ function App() {
     getCartItems();
   },[getCartItems ]);
 
-  if (checkingAuth) return<LoadingSpinner/>;
+  if (checkingAuth) return<LoadingSpinner />;
   return (
     <div className='min-h-screen bg-gray-900 text-white relative overflow-hidden'>
       {/* Background gradient */}
